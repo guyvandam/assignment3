@@ -2,13 +2,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameEnvironment {
-    private List<Collidable> collidables = new ArrayList<Collidable>();
+    private List<Collidable> collidables;
 
+    public GameEnvironment() {
+        this.collidables = new ArrayList<Collidable>();
+    }
 
     // add the given collidable to the environment.
     public void addCollidable(Collidable c) {
         this.collidables.add(c);
     }
+
+    public List<Collidable> getCollidables() {
+        return collidables;
+    }
+
+
+
 
     // Assume an object moving from line.start() to line.end().
     // If this object will not collide with any of the collidables
@@ -19,20 +29,23 @@ public class GameEnvironment {
             return null;
         }
         Point startOfTrajectory = trajectory.start();
-        Collidable returnCollidable = collidables.get(0);
+        Collidable returnCollidable = this.getCollidables().get(0);
         Rectangle returnRect = returnCollidable.getCollisionRectangle();
         Point returnPoint = trajectory.closestIntersectionToStartOfLine(returnRect);
 
-        for (Collidable c : collidables) {
+        for (Collidable c : this.getCollidables()) {
             Rectangle tempRect = c.getCollisionRectangle();
             Point tempPoint = trajectory.closestIntersectionToStartOfLine(tempRect);
 
-            if (startOfTrajectory.distance(tempPoint) < startOfTrajectory.distance(returnPoint)) {
+            if ((returnPoint == null && tempPoint != null) || (returnPoint != null && tempPoint != null &&
+                    startOfTrajectory.distance(tempPoint) < startOfTrajectory.distance(returnPoint))) {
                 returnCollidable = c;
                 returnPoint = tempPoint;
             }
         }
-
+        if (returnPoint == null) {
+            return null;
+        }
         return new CollisionInfo(returnPoint, returnCollidable);
     }
 

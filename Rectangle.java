@@ -14,6 +14,16 @@ public class Rectangle {
         this.height = height;
     }
 
+//    public boolean isInRectangle(Point p){
+//        if(p==null){
+//            return false;
+//        }
+//        // left<=x<=right. upper<=y<=lower
+//        if(p.getX() >= this.getUpperLeft().getX() && p.getX() <= this.getUpperRight().getX()){
+//
+//        }
+//    }
+
     // Return a (possibly empty) List of intersection points
     // with the specified line.
     public java.util.List<Point> intersectionPoints(Line line) {
@@ -53,21 +63,31 @@ public class Rectangle {
         return this.upperLeft;
     }
 
+    public Point getUpperRight() {
+        return new Point(this.getUpperLeft().getX() + getWidth(), this.getUpperLeft().getY());
+    }
+
+    public Point getLowerLeft() {
+        return new Point(this.getUpperLeft().getX(), this.getUpperLeft().getY() + getHeight());
+    }
+
+    public Point getLowerRight() {
+        return new Point(this.getUpperLeft().getX() + this.getWidth(), this.getUpperLeft().getY() + this.getHeight());
+    }
+
     public Line getUpperEdge() {
-        return new Line(this.getUpperLeft(), new Point(this.getUpperLeft().getX() + getWidth(), this.getUpperLeft().getY()));
+        return new Line(this.getUpperLeft(), this.getUpperRight());
     }
 
     public Line getLowerEdge() {
-        return new Line(new Point(this.getUpperLeft().getX(), this.getUpperLeft().getY() - getHeight()),
-                new Point(this.getUpperLeft().getX() + this.getWidth(), this.getUpperLeft().getY() - this.getHeight()));
+        return new Line(this.getLowerLeft(), this.getLowerRight());
     }
 
     public Line getLeftEdge() {
-        return new Line(this.getUpperLeft(), new Point(this.getUpperLeft().getX(), this.getUpperLeft().getY() - this.getHeight()));
+        return new Line(this.getUpperLeft(), this.getLowerLeft());
     }
 
     public Line getRightEdge() {
-        return new Line(new Point(this.getUpperLeft().getX() + this.getWidth(), this.getUpperLeft().getY()),
-                new Point(this.getUpperLeft().getX() + this.getWidth(), this.getUpperLeft().getY() - this.getHeight()));
+        return new Line(this.getUpperRight(), this.getLowerRight());
     }
 }

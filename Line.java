@@ -111,6 +111,10 @@ public class Line {
         return (p != null) && (Math.abs(this.start.distance(p) + this.end.distance(p) - this.length()) <= 1e-10);
     }
 
+//    public boolean isInRegion(Point p){
+//        return p!=null &&
+//    }
+
     /**
      * checks if our line is a vertical line.
      *
@@ -270,14 +274,13 @@ public class Line {
         if (rect == null) {
             return null;
         }
-        Point upperLeft = rect.getUpperLeft();
 
-        Line l1 = new Line(upperLeft, new Point(upperLeft.getX() + rect.getWidth(), upperLeft.getY()));
-        Line l2 = new Line(l1.end, new Point(upperLeft.getX() + rect.getWidth(), upperLeft.getY() - rect.getHeight()));
-        Line l3 = new Line(l2.end(), new Point(upperLeft.getX(), upperLeft.getY() - rect.getHeight()));
-        Line l4 = new Line(l3.end, upperLeft);
+        Line left = rect.getLeftEdge();
+        Line right = rect.getRightEdge();
+        Line upper = rect.getUpperEdge();
+        Line lower = rect.getLowerEdge();
 
-        Line[] rectangleLines = {l1, l2, l3, l4};
+        Line[] rectangleLines = {left, right, lower, upper};
         Point p1 = null, p2 = null, temp;
         //finds all the intersection points.
         for (Line l : rectangleLines) {
