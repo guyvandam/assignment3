@@ -11,7 +11,7 @@ public class Test1 {
         Sleeper sleeper = new Sleeper();
 
 
-        Ball ball = new Ball(140, 140, 30, java.awt.Color.BLACK);
+        Ball ball = new Ball(140, 140, 3, java.awt.Color.BLACK);
         ball.setVelocity(6, 7);
         GameEnvironment GE = new GameEnvironment();
         Block b1 = new Block(new Rectangle(new Point(0, 0), 20, 400), Color.red);

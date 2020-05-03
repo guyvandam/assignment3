@@ -175,12 +175,14 @@ public class Ball implements Sprite {
     public void moveOneStep() {
         if (this.getVelocity() != null) {
 
-            this.setCenter(this.getVelocity().applyToPoint(this.getCenter()));
+//            this.setCenter(this.getVelocity().applyToPoint(this.getCenter()));
             Line trajectory = new Line(this.getCenter(), this.getVelocity().applyToPoint(this.getCenter()));
             CollisionInfo closestCollision = this.getGameEnvironment().getClosestCollision(trajectory);
 
 
-            if (closestCollision != null) {
+            if (closestCollision == null) {
+                this.setCenter(this.getVelocity().applyToPoint(this.getCenter()));
+            } else {
                 Point hitPoint = closestCollision.collisionPoint();
                 // as we said. the radios would be so small so moving it to the hit point minus the radios would mean
                 // "almost to the collision point" as required.

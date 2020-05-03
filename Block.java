@@ -50,8 +50,8 @@ public class Block implements Collidable, Sprite {
         Line upper = this.getCollisionRectangle().getUpperEdge();
         Line lower = this.getCollisionRectangle().getLowerEdge();
 
-        double collisionPointX = collisionPoint.getX();
-        double collisionPointY = collisionPoint.getY();
+//        double collisionPointX = collisionPoint.getX();
+//        double collisionPointY = collisionPoint.getY();
 
 //        if (collisionPointX <= right.start().getX() && collisionPointX >= left.start().getX()) {
 //        if (isCrossedVerticalLine(right, collisionPoint, currentVelocity) || isCrossedVerticalLine(left, collisionPoint, currentVelocity)) {

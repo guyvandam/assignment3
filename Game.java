@@ -50,6 +50,12 @@ public class Game {
         int ballSize = 3, startX = 52, startY = 40, dx = 4, dy = 3;
         java.awt.Color ballColor = Color.BLACK;
 
+        int paddleWidth = 20, paddleHeight = 10, paddleX = 50, paddleY = 30;
+        java.awt.Color paddleColor = Color.gray;
+
+        Paddle paddle = new Paddle(this.getGui().getKeyboardSensor(), new Rectangle(new Point(paddleX, paddleY), paddleWidth, paddleHeight), paddleColor);
+        paddle.addToGame(this);
+
 
         Ball ball = new Ball(new Point(startX, startY), ballSize, ballColor);
         ball.setGameEnvironment(this.getEnvironment());
@@ -60,7 +66,7 @@ public class Game {
         for (int i = 0; i < GUIWidth; i += blockWidth) {
 
             for (int j = 0; j < GUIHeight; j += blockHeight) {
-                if (i == 0 || i == GUIWidth - blockWidth || j == 0 || j == GUIHeight-blockHeight) {
+                if (i == 0 || i == GUIWidth - blockWidth || j == 0 || j == GUIHeight - blockHeight) {
                     Block temp = new Block(new Rectangle(new Point(i, j), blockWidth, blockHeight), blockColor);
                     temp.addToGame(this);
                 }
