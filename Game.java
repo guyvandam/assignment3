@@ -47,13 +47,13 @@ public class Game {
         int blockWidth = 40, blockHeight = 30;
         java.awt.Color blockColor = Color.orange;
 
-        int ballSize = 3, startX = 52, startY = 40, dx = 4, dy = 3;
+        int ballSize = 3, startX = 52, startY = 40, dx = 3, dy = 3;
         java.awt.Color ballColor = Color.BLACK;
 
-        int paddleWidth = 20, paddleHeight = 10, paddleX = 50, paddleY = 30;
+        int paddleWidth = 60, paddleHeight = 10, paddleX = 50, paddleY = 330;
         java.awt.Color paddleColor = Color.gray;
 
-        Paddle paddle = new Paddle(this.getGui().getKeyboardSensor(), new Rectangle(new Point(paddleX, paddleY), paddleWidth, paddleHeight), paddleColor);
+        Paddle paddle = new Paddle(this.getGui().getKeyboardSensor(), new Rectangle(new Point(paddleX, paddleY), paddleWidth, paddleHeight), paddleColor, this.getEnvironment());
         paddle.addToGame(this);
 
 

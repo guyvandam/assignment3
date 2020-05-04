@@ -18,22 +18,32 @@ public class GameEnvironment {
     }
 
 
-
-
     // Assume an object moving from line.start() to line.end().
     // If this object will not collide with any of the collidables
     // in this collection, return null. Else, return the information
     // about the closest collision that is going to occur.
     public CollisionInfo getClosestCollision(Line trajectory) {
+        return getClosestCollision(trajectory, null);
+    }
+
+
+    public CollisionInfo getClosestCollision(Line trajectory, Collidable exception) {
         if (null == trajectory) {
             return null;
         }
         Point startOfTrajectory = trajectory.start();
-        Collidable returnCollidable = this.getCollidables().get(0);
+        int i=0;
+        while (this.getCollidables().get(i).equals(exception)){
+            i++;
+        }
+        Collidable returnCollidable = this.getCollidables().get(i);
         Rectangle returnRect = returnCollidable.getCollisionRectangle();
         Point returnPoint = trajectory.closestIntersectionToStartOfLine(returnRect);
 
         for (Collidable c : this.getCollidables()) {
+            if (c.equals(exception)) {
+                continue;
+            }
             Rectangle tempRect = c.getCollisionRectangle();
             Point tempPoint = trajectory.closestIntersectionToStartOfLine(tempRect);
 

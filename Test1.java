@@ -12,7 +12,7 @@ public class Test1 {
 
 
         Ball ball = new Ball(140, 140, 3, java.awt.Color.BLACK);
-        ball.setVelocity(6, 7);
+        ball.setVelocity(5, 5);
         GameEnvironment GE = new GameEnvironment();
         Block b1 = new Block(new Rectangle(new Point(0, 0), 20, 400), Color.red);
         Block b2 = new Block(new Rectangle(new Point(0, 0), 400, 20), Color.blue);

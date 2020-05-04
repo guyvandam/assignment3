@@ -14,15 +14,9 @@ public class Rectangle {
         this.height = height;
     }
 
-//    public boolean isInRectangle(Point p){
-//        if(p==null){
-//            return false;
-//        }
-//        // left<=x<=right. upper<=y<=lower
-//        if(p.getX() >= this.getUpperLeft().getX() && p.getX() <= this.getUpperRight().getX()){
-//
-//        }
-//    }
+    public void setUpperLeft(Point upperLeft) {
+        this.upperLeft = upperLeft;
+    }
 
     // Return a (possibly empty) List of intersection points
     // with the specified line.
@@ -90,4 +84,6 @@ public class Rectangle {
     public Line getRightEdge() {
         return new Line(this.getUpperRight(), this.getLowerRight());
     }
+
+
 }

@@ -190,8 +190,14 @@ public class Ball implements Sprite {
 //                this.setCenter(new Point(hitPoint.getX() - this.getSize(), hitPoint.getY() - this.getSize()));
                 this.setCenter(new Point(hitPoint.getX() - this.getVelocity().getDx() / 2, hitPoint.getY() - this.getVelocity().getDy() / 2));
 //                this.setCenter(new Point(hitPoint.getX() - 2, hitPoint.getY() - 2));
-                Block b = (Block) closestCollision.collisionObject();
-                this.setVelocity(b.hit(closestCollision.collisionPoint(), this.getVelocity()));
+                try {
+                    Block b = (Block) closestCollision.collisionObject();
+                    this.setVelocity(b.hit(closestCollision.collisionPoint(), this.getVelocity()));
+                } catch (Exception e) {
+                    Paddle p = (Paddle) closestCollision.collisionObject();
+                    this.setVelocity(p.hit(closestCollision.collisionPoint(), this.getVelocity()));
+                }
+
             }
         }
     }
