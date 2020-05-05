@@ -1,6 +1,6 @@
 /**
  * @author Guy Vandam 325133148 <guyvandam@gmail.com>
- * @version 1.0
+ * @version 2.0
  * @since 2020-03-28.
  */
 
@@ -110,10 +110,6 @@ public class Line {
     public boolean isInLine(Point p) {
         return (p != null) && (Math.abs(this.start.distance(p) + this.end.distance(p) - this.length()) <= 1e-10);
     }
-
-//    public boolean isInRegion(Point p){
-//        return p!=null &&
-//    }
 
     /**
      * checks if our line is a vertical line.
@@ -270,6 +266,16 @@ public class Line {
                 || (start.equals(other.end()) && end.equals(other.start)));
     }
 
+    /**
+     * returns the closest intersection with the input Rectangle to the start of the line.
+     * <p>
+     * finds the 2 intersection points of the line with the input Rectangle. if there's just one intersection point
+     * returns it, otherwise finds the point with the minimum distance to the start of the line.
+     * </p>
+     *
+     * @param rect a Rectangle object.
+     * @return Point object (or a null if an intersection point doesn't exist).
+     */
     public Point closestIntersectionToStartOfLine(Rectangle rect) {
         if (rect == null) {
             return null;

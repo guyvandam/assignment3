@@ -3,14 +3,28 @@ import biuoop.KeyboardSensor;
 
 import java.awt.Color;
 
+/**
+ * @author Guy Vandam 325133148 <guyvandam@gmail.com>
+ * @version 1.0
+ * @since 2020-03-28.
+ */
 public class Paddle implements Sprite, Collidable {
     private biuoop.KeyboardSensor keyboard;
     private Rectangle rect;
     private java.awt.Color color;
     private GameEnvironment gameEnvironment;
     private int numOfRegions;
+    // the part of the width we want to move the paddle each time we press the right or left keys.
     private int partOfWidth;
 
+    /**
+     * constructor function.
+     *
+     * @param keyboard        a GUI keyboard object.
+     * @param rect            a Rectangle object.
+     * @param color           a java.awt.color object.
+     * @param gameEnvironment a GameEnvironment object.
+     */
     public Paddle(KeyboardSensor keyboard, Rectangle rect, Color color, GameEnvironment gameEnvironment) {
         this.keyboard = keyboard;
         this.rect = rect;
@@ -20,30 +34,52 @@ public class Paddle implements Sprite, Collidable {
         this.partOfWidth = 6;
     }
 
+    /**
+     * @return an integer. the numbers of regions the paddle have.
+     */
     public int getNumOfRegions() {
         return numOfRegions;
     }
 
+    /**
+     * @return an integer. the part of the width we want to move.
+     */
     public int getPartOfWidth() {
         return this.partOfWidth;
     }
 
+    /**
+     * @return a Rectangle object.
+     */
     public Rectangle getRect() {
         return rect;
     }
 
+    /**
+     * @return a keyboardSensor object.
+     */
     public KeyboardSensor getKeyboard() {
         return keyboard;
     }
 
+    /**
+     * @return a GameEnvironment object. the paddle's game environment.
+     */
     public GameEnvironment getGameEnvironment() {
         return gameEnvironment;
     }
 
-
+    /**
+     * moves the paddle one step to the left
+     * <p>
+     * checks for corner hits using the 'getClosestIntersection' function. if it senses there's a hit. moves the
+     * paddle to the hit point.
+     * </p>
+     */
     public void moveLeft() {
         Point upperLeft = this.getRect().getUpperLeft(),
-                oneStep = new Point(upperLeft.getX() - this.getRect().getWidth() / this.getPartOfWidth(), upperLeft.getY());
+                oneStep = new Point(upperLeft.getX() - this.getRect().getWidth() / this.getPartOfWidth(),
+                        upperLeft.getY());
 
         Line trajectory = new Line(upperLeft, oneStep);
         CollisionInfo closestCollision = this.getGameEnvironment().getClosestCollision(trajectory, this);
@@ -54,10 +90,20 @@ public class Paddle implements Sprite, Collidable {
         }
     }
 
+    /**
+     * moves the paddle one step to the right
+     * <p>
+     * checks for corner hit using the 'getClosestIntersection' function between the right edge and the right edge
+     * of the future step, if there's a hit, moves the right edge to the collision point - the paddle itself to the
+     * same point minus the width of the paddle in the x-axis.
+     * </p>
+     */
     public void moveRight() {
         Point upperRight = this.getRect().getUpperRight(), upperLeft = this.getRect().getUpperLeft(),
-                oneStepR = new Point(upperRight.getX() + this.getRect().getWidth() / this.getPartOfWidth(), upperRight.getY()),
-                oneStep = new Point(upperLeft.getX() + this.getRect().getWidth() / this.getPartOfWidth(), upperLeft.getY());
+                oneStepR = new Point(upperRight.getX() + this.getRect().getWidth() / this.getPartOfWidth(),
+                        upperRight.getY()),
+                oneStep = new Point(upperLeft.getX() + this.getRect().getWidth() / this.getPartOfWidth(),
+                        upperLeft.getY());
 
         Line trajectory = new Line(upperRight, oneStepR);
 
@@ -65,8 +111,8 @@ public class Paddle implements Sprite, Collidable {
         if (closestCollision == null) {
             this.getRect().setUpperLeft(oneStep);
         } else {
-            this.getRect().setUpperLeft(new Point(closestCollision.collisionPoint().getX() -
-                    this.getRect().getWidth(), closestCollision.collisionPoint().getY()));
+            this.getRect().setUpperLeft(new Point(closestCollision.collisionPoint().getX()
+                    - this.getRect().getWidth(), closestCollision.collisionPoint().getY()));
         }
     }
 
@@ -77,7 +123,6 @@ public class Paddle implements Sprite, Collidable {
             moveLeft();
         } else if (this.getKeyboard().isPressed(KeyboardSensor.RIGHT_KEY)) {
             moveRight();
-        } else {
         }
     }
 
@@ -114,32 +159,34 @@ public class Paddle implements Sprite, Collidable {
         if (upper.isInLine(collisionPoint) || lower.isInLine(collisionPoint)) {
             Line edge = upper.isInLine(collisionPoint) ? upper : lower;
             int region = this.getRegion(edge, collisionPoint);
-            double speed = Math.sqrt(currentVelocity.getDx() * currentVelocity.getDx() +
-                    currentVelocity.getDy() * currentVelocity.getDy());
+            double speed = Math.sqrt(currentVelocity.getDx() * currentVelocity.getDx()
+                    + currentVelocity.getDy() * currentVelocity.getDy());
 
             switch (region) {
                 case 1:
-                    currentVelocity = Velocity.fromAngleAndSpeed(300, speed);
-                    break;
+                    return Velocity.fromAngleAndSpeed(210, speed);
                 case 2:
-                    currentVelocity = Velocity.fromAngleAndSpeed(330, speed);
-                    break;
+                    return Velocity.fromAngleAndSpeed(240, speed);
                 case 3:
                     currentVelocity = new Velocity(currentVelocity.getDx(), -currentVelocity.getDy());
                     break;
                 case 4:
-                    currentVelocity = Velocity.fromAngleAndSpeed(30, speed);
-                    break;
-                case 5:
-                    currentVelocity = Velocity.fromAngleAndSpeed(60, speed);
-                    break;
+                    return Velocity.fromAngleAndSpeed(300, speed);
                 default:
-                    System.out.println("ERROR");
+                    return Velocity.fromAngleAndSpeed(330, speed);
+
             }
         }
         return currentVelocity;
     }
 
+    /**
+     * returns the number of region the point is located on the line.
+     *
+     * @param edge  a Line object. representing the paddle upper edge.
+     * @param point a Point object.
+     * @return an integer. the number of the region.
+     */
     public int getRegion(Line edge, Point point) {
         if (edge == null || point == null) {
             return 0;
@@ -151,11 +198,14 @@ public class Paddle implements Sprite, Collidable {
         while (i <= this.getNumOfRegions() && dist > lengthOfRegion * i) {
             i++;
         }
-        System.out.println(i);
         return i;
     }
 
-    // Add this paddle to the game.
+    /**
+     * adds the paddle to the input Game object , meaning adds it to the list of interfaces it implements.
+     *
+     * @param g a Game object.
+     */
     public void addToGame(Game g) {
         if (g != null) {
             g.addSprite(this);

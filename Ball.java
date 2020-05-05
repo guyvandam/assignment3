@@ -4,7 +4,7 @@ import java.awt.Color;
 
 /**
  * @author Guy Vandam 325133148 <guyvandam@gmail.com>
- * @version 1.0
+ * @version 2.0
  * @since 2020-03-28.
  */
 public class Ball implements Sprite {
@@ -29,6 +29,23 @@ public class Ball implements Sprite {
     }
 
     /**
+     * constructor function.
+     *
+     * @param center          a Point object, the center of the ball.
+     * @param r               an integer, the radios of the ball.
+     * @param color           a java.awt.Color object, the color of the ball.
+     * @param v               a Velocity object, the velocity of the ball.
+     * @param gameEnvironment a GameEnvironment object, the game environment of the ball.
+     */
+    public Ball(Point center, int r, Color color, Velocity v, GameEnvironment gameEnvironment) {
+        this.center = center;
+        this.r = r;
+        this.color = color;
+        this.v = v;
+        this.gameEnvironment = gameEnvironment;
+    }
+
+    /**
      * constructor function as well, gets x and y of the center point instead of the point itself.
      *
      * @param x     a double. the x field of the center point.
@@ -42,10 +59,16 @@ public class Ball implements Sprite {
         this.color = color;
     }
 
+    /**
+     * @return a Point object, the center point of the ball.
+     */
     public Point getCenter() {
         return center;
     }
 
+    /**
+     * @return a GameEnvironment Object, the ball's game environment.
+     */
     public GameEnvironment getGameEnvironment() {
         return gameEnvironment;
     }
@@ -57,12 +80,22 @@ public class Ball implements Sprite {
         return (int) (this.center.getX());
     }
 
-    public void setGameEnvironment(GameEnvironment gameEnvironment) {
-        this.gameEnvironment = gameEnvironment;
+    /**
+     * sets the input GameEnvironment to be the ball's GameEnvironment.
+     *
+     * @param newGameEnvironment a GameEnvironment object.
+     */
+    public void setGameEnvironment(GameEnvironment newGameEnvironment) {
+        this.gameEnvironment = newGameEnvironment;
     }
 
-    public void setCenter(Point center) {
-        this.center = center;
+    /**
+     * sets the input point to be the ball's center point.
+     *
+     * @param newCenter a Point object.
+     */
+    public void setCenter(Point newCenter) {
+        this.center = newCenter;
     }
 
     /**
@@ -92,6 +125,7 @@ public class Ball implements Sprite {
      *
      * @param surface a DrawSurface object. the GUI surface we want to draw to ball on.
      */
+    @Override
     public void drawOn(DrawSurface surface) {
         if (surface != null) {
             surface.setColor(this.color);
@@ -99,7 +133,7 @@ public class Ball implements Sprite {
         }
     }
 
-
+    @Override
     public void timePassed() {
         this.moveOneStep();
     }
@@ -132,14 +166,6 @@ public class Ball implements Sprite {
         return this.v;
     }
 
-
-//    public void moveOneStep() {
-//        if (this.v != null) {
-//            this.center = this.getVelocity().applyToPoint(this.center);
-//        }
-//
-//    }
-
     /**
      * moves one step in the ball's velocity. checks for the ball hitting the corners of the frame. and inverting the
      * velocity.
@@ -171,11 +197,28 @@ public class Ball implements Sprite {
 
     }
 
-
+    /**
+     * moves the ball one step in it's velocity, checks for collision on its way.
+     * <p>
+     * follows the collision algorithm of the task page:
+     * 1) compute the ball trajectory (the trajectory is "how the ball will move
+     * without any obstacles" -- its a line starting at current location, and
+     * ending where the velocity will take the ball if no collisions will occur).
+     * <p>
+     * 2) Check (using the game environment) if moving on this trajectory will hit anything.
+     * <p>
+     * 2.1) If no, then move the ball to the end of the trajectory.
+     * <p>
+     * 2.2) Otherwise (there is a hit):
+     * 2.2.2) move the ball to "almost" the hit point, but just slightly before it.
+     * 2.2.3) notify the hit object (using its hit() method) that a collision occurred.
+     * 2.2.4) update the velocity to the new velocity returned by the hit() method.
+     * <p>
+     * deals with the balls being 'stuck' inside a Collidable.
+     * </p>
+     */
     public void moveOneStep() {
         if (this.getVelocity() != null) {
-
-//            this.setCenter(this.getVelocity().applyToPoint(this.getCenter()));
             Line trajectory = new Line(this.getCenter(), this.getVelocity().applyToPoint(this.getCenter()));
             CollisionInfo closestCollision = this.getGameEnvironment().getClosestCollision(trajectory);
 
@@ -183,25 +226,31 @@ public class Ball implements Sprite {
             if (closestCollision == null) {
                 this.setCenter(this.getVelocity().applyToPoint(this.getCenter()));
             } else {
-                Point hitPoint = closestCollision.collisionPoint();
-                // as we said. the radios would be so small so moving it to the hit point minus the radios would mean
-                // "almost to the collision point" as required.
+                // in case the ball is trapped inside a block or a paddle.
+                if (closestCollision.collisionObject().getCollisionRectangle().isInRectangle(this.getCenter())) {
+                    this.setCenter(closestCollision.collisionPoint());
+                    System.out.println("in");
+                } else {
+                    Point hitPoint = closestCollision.collisionPoint();
+                    // as we said. the radios would be so small so moving it to the hit point minus the half of the
+                    // velocity would mean "almost to the collision point" as required, as well as far enough for the
+                    // ball to 'escape' the hit Collidable. I tried other stuff like the ball's size or 2-3 pixels but
+                    // it didn't work, I stuck with this approach because I saw is works the best when i debugged.
 
-//                this.setCenter(new Point(hitPoint.getX() - this.getSize(), hitPoint.getY() - this.getSize()));
-                this.setCenter(new Point(hitPoint.getX() - this.getVelocity().getDx() / 2, hitPoint.getY() - this.getVelocity().getDy() / 2));
-//                this.setCenter(new Point(hitPoint.getX() - 2, hitPoint.getY() - 2));
-                try {
-                    Block b = (Block) closestCollision.collisionObject();
-                    this.setVelocity(b.hit(closestCollision.collisionPoint(), this.getVelocity()));
-                } catch (Exception e) {
-                    Paddle p = (Paddle) closestCollision.collisionObject();
-                    this.setVelocity(p.hit(closestCollision.collisionPoint(), this.getVelocity()));
+                    this.setCenter(new Point(hitPoint.getX() - this.getVelocity().getDx() / 2, hitPoint.getY()
+                            - this.getVelocity().getDy() / 2));
                 }
-
+                Collidable c = closestCollision.collisionObject();
+                this.setVelocity(c.hit(closestCollision.collisionPoint(), this.getVelocity()));
             }
         }
     }
 
+    /**
+     * adds the ball to the input Game object. meaning adds it to the list of interfaces it implements.
+     *
+     * @param g a Game object. the Game we want to add the ball to.
+     */
     public void addToGame(Game g) {
         if (g != null) {
             g.addSprite(this);
