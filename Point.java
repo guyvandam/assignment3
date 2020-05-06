@@ -56,7 +56,7 @@ public class Point {
     }
 
 
-    
+
 
     /**
      * returns the value of the x field.

@@ -15,6 +15,7 @@ public class Game {
     private GUI gui;
     private int guiWidth;
     private int guiHeight;
+    private int widthORHeight = 20;
 
     /**
      * constractur function.
@@ -76,6 +77,13 @@ public class Game {
     }
 
     /**
+     * @return the width/height of the corner block.
+     */
+    public int getWidthORHeight() {
+        return widthORHeight;
+    }
+
+    /**
      * @return a GameEnvironment object.
      */
     public GameEnvironment getEnvironment() {
@@ -105,65 +113,56 @@ public class Game {
      */
     public void initialize() {
         this.setGui(new GUI("title", getGuiWidth(), getGuiHeight()));
-
-//        int blockWidth = 40, blockHeight = 60;
-//        java.awt.Color blockColor = Color.orange;
-//
-//        int ballSize = 3, startX = 70, startY = 70, dx = 4, dy = 4;
-//        java.awt.Color ballColor = Color.BLACK;
-
-//        int paddleWidth = 60, paddleHeight = 10, paddleX = 50, paddleY = 530;
-//        java.awt.Color paddleColor = Color.gray;
-//
-//        Paddle paddle = new Paddle(this.getGui().getKeyboardSensor(), new Rectangle(new Point(paddleX, paddleY),
-//        paddleWidth, paddleHeight), paddleColor, this.getEnvironment());
-//        paddle.addToGame(this);
-
-
-//        Ball ball = new Ball(new Point(startX, startY), ballSize, ballColor);
-//        ball.setGameEnvironment(this.getEnvironment());
-//        ball.setVelocity(dx, dy);
-//        ball.addToGame(this);
-
-//        // adds the blocks.
-//        for (int i = 0; i < GUIWidth; i += blockWidth) {
-//
-//            for (int j = 0; j < GUIHeight; j += blockHeight) {
-//                if (i == 0 || i == GUIWidth - blockWidth || j == 0 || j == GUIHeight - blockHeight) {
-//                    Block temp = new Block(new Rectangle(new Point(i, j), blockWidth, blockHeight), blockColor);
-//                    temp.addToGame(this);
-//                }
-//            }
-//        }
-
-        int widthORHeight = this.addBorderBlocks();
-        this.addBalls(widthORHeight);
-        this.addPaddle(widthORHeight);
-//        this.addBlocks();
+        this.addBorderBlocks();
+        this.addBalls();
+        this.addPaddle();
+        this.addBlocks();
     }
 
+    /**
+     * adds a blue rectangle to the screen to use as a blue background.
+     *
+     * @param d a DrawSurface. the surface we want to add the rectangle to.
+     */
+    public void addBackgroundColor(DrawSurface d) {
+        if (d != null) {
+            d.setColor(Color.blue);
+            d.fillRectangle(0, 0, this.getGuiWidth(), this.getGuiHeight());
+        }
+    }
+
+    /**
+     * adds the colored blocks to the Game, with the same pattern of the example in the task page.
+     */
     public void addBlocks() {
         java.awt.Color[] colors = {Color.gray, Color.red, Color.yellow, Color.cyan, Color.pink, Color.green};
 
-        int blockWidth = 30, blockHeight = 20;
-        int startX = 100, startY = 200, c = 0;
-        for (int j = startY; j < startY + colors.length * blockHeight; j += blockHeight) {
-            for (int i = startX; i < this.getGuiWidth() - blockWidth; i += blockWidth) {
-                Block temp = new Block(new Rectangle(new Point(i, j), blockWidth, blockHeight), colors[c]);
+        int blockWidth = 50, blockHeight = 20;
+        int numOfRows = colors.length, numOfColumns = 12;
+        int startX = this.getGuiWidth() - numOfColumns * blockWidth - this.getWidthORHeight() - 1, startY = 100;
+        int rowCounter = 0, columnCounter;
+        while (rowCounter < numOfRows) {
+            columnCounter = 0;
+            while (columnCounter < numOfColumns) {
+                Block temp = new Block(new Rectangle(new Point(startX, startY), blockWidth, blockHeight),
+                        colors[rowCounter]);
                 temp.addToGame(this);
+                startX += blockWidth;
+                columnCounter++;
             }
-            c++;
-        }
+            startY += blockHeight;
+            numOfColumns--;
+            startX = this.getGuiWidth() - numOfColumns * blockWidth - this.getWidthORHeight() - 1;
+            rowCounter++;
 
+        }
     }
 
     /**
      * adds the paddle to the game.
-     *
-     * @param widthORHeight an integer. the width/height of the corner blocks.
      */
-    public void addPaddle(int widthORHeight) {
-        int paddleWidth = 60, paddleHeight = 10, paddleX = 50, paddleY = this.getGuiHeight() - widthORHeight
+    public void addPaddle() {
+        int paddleWidth = 60, paddleHeight = 10, paddleX = 50, paddleY = this.getGuiHeight() - this.getWidthORHeight()
                 - paddleHeight;
         java.awt.Color paddleColor = Color.ORANGE;
 
@@ -174,17 +173,16 @@ public class Game {
 
     /**
      * adds 2 balls to the game.
-     *
-     * @param widthORHeight an integer. the width/height of the corner blocks.
      */
-    public void addBalls(int widthORHeight) {
+    public void addBalls() {
         int ballSize = 3, dx = 4, dy = 4;
         java.awt.Color ballColor = Color.BLACK;
 
-        // random start points so they wont look uniform.
-        Ball b1 = new Ball(new Point(widthORHeight * 2, widthORHeight * 2), ballSize, ballColor,
+        // randomly picked start points so they wont look uniform.
+        Ball b1 = new Ball(new Point(this.getWidthORHeight() * 2, this.getWidthORHeight() * 2), ballSize, ballColor,
                 new Velocity(dx, dy), this.getEnvironment());
-        Ball b2 = new Ball(new Point(widthORHeight + this.getGuiWidth() / 3, widthORHeight * 3), ballSize,
+        Ball b2 = new Ball(new Point(this.getWidthORHeight() + this.getGuiWidth() / 3,
+                this.getWidthORHeight() * 3), ballSize,
                 ballColor, new Velocity(dx, dy), this.getEnvironment());
 
         b1.addToGame(this);
@@ -193,25 +191,25 @@ public class Game {
 
     /**
      * adds the border blocks to the game.
-     *
-     * @return an integer. the width/height of the corner blocks.
      */
-    public int addBorderBlocks() {
+    public void addBorderBlocks() {
         java.awt.Color blockColor = Color.gray;
-        int widthORHeight = 20;
-        Block upper = new Block(new Rectangle(new Point(0, 0), this.getGuiWidth(), widthORHeight), blockColor);
-        Block lower = new Block(new Rectangle(new Point(widthORHeight, this.getGuiHeight() - widthORHeight),
-                this.getGuiWidth() - 2 * widthORHeight, widthORHeight), blockColor);
-        Block left = new Block(new Rectangle(new Point(0, widthORHeight), widthORHeight, this.getGuiWidth()
-                - 2 * widthORHeight), blockColor);
-        Block right = new Block(new Rectangle(new Point(this.getGuiWidth() - widthORHeight, widthORHeight),
-                widthORHeight, this.getGuiWidth() - 2 * widthORHeight), blockColor);
+        Block upper = new Block(new Rectangle(new Point(0, 0), this.getGuiWidth(), this.getWidthORHeight()),
+                blockColor);
+        Block lower = new Block(new Rectangle(new Point(this.getWidthORHeight(), this.getGuiHeight()
+                - this.getWidthORHeight()),
+                this.getGuiWidth() - 2 * this.getWidthORHeight(), this.getWidthORHeight()), blockColor);
+        Block left = new Block(new Rectangle(new Point(0, this.getWidthORHeight()), this.getWidthORHeight(),
+                this.getGuiWidth()
+                        - 2 * this.getWidthORHeight()), blockColor);
+        Block right = new Block(new Rectangle(new Point(this.getGuiWidth() - this.getWidthORHeight(),
+                this.getWidthORHeight()),
+                this.getWidthORHeight(), this.getGuiWidth() - 2 * this.getWidthORHeight()), blockColor);
 
         Block[] blocks = {upper, lower, right, left};
         for (Block b : blocks) {
             b.addToGame(this);
         }
-        return widthORHeight;
     }
 
     /**
@@ -228,6 +226,7 @@ public class Game {
             long startTime = System.currentTimeMillis(); // timing
 
             DrawSurface d = this.getGui().getDrawSurface();
+            this.addBackgroundColor(d);
             this.sprites.drawAllOn(d);
             this.getGui().show(d);
             this.sprites.notifyAllTimePassed();

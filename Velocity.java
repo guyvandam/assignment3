@@ -1,6 +1,6 @@
 /**
  * @author Guy Vandam 325133148 <guyvandam@gmail.com>
- * @version 1.0
+ * @version 2.0
  * @since 2020-03-28.
  */
 public class Velocity {
@@ -16,6 +16,26 @@ public class Velocity {
     public Velocity(double dx, double dy) {
         this.dx = dx;
         this.dy = dy;
+    }
+
+    /**
+     * a static function. get an angle and a speed (the size of the speed) and returns a velocity matching to the input
+     * value.
+     * <p>
+     * calculates dx and dy using a "polaric" representation. (x,y) = (r*cos(theta),r*sin(theta)). calculates the
+     * input angle in radians to match the input of the sin and cos functions of the Math class.
+     * </p>
+     * <p>
+     * note: the sin function returns a very small number instead of 0 when needed. probably due to a numerical reason.
+     *
+     * @param angle a double. the angle of the wanted velocity.
+     * @param speed a double. the size of the wanted velocity.
+     * @return a Velocity object. the velocity matching to the input values.
+     */
+    public static Velocity fromAngleAndSpeed(double angle, double speed) {
+        double dx = speed * Math.cos((angle * Math.PI) / 180);
+        double dy = speed * Math.sin((angle * Math.PI) / 180);
+        return new Velocity(dx, dy);
     }
 
     /**
@@ -48,25 +68,5 @@ public class Velocity {
      */
     public double getDy() {
         return this.dy;
-    }
-
-    /**
-     * a static function. get an angle and a speed (the size of the speed) and returns a velocity matching to the input
-     * value.
-     * <p>
-     * calculates dx and dy using a "polaric" representation. (x,y) = (r*cos(theta),r*sin(theta)). calculates the
-     * input angle in radians to match the input of the sin and cos functions of the Math class.
-     * </p>
-     * <p>
-     * note: the sin function returns a very small number instead of 0 when needed. probably due to a numerical reason.
-     *
-     * @param angle a double. the angle of the wanted velocity.
-     * @param speed a double. the size of the wanted velocity.
-     * @return a Velocity object. the velocity matching to the input values.
-     */
-    public static Velocity fromAngleAndSpeed(double angle, double speed) {
-        double dx = speed * Math.cos((angle * Math.PI) / 180);
-        double dy = speed * Math.sin((angle * Math.PI) / 180);
-        return new Velocity(dx, dy);
     }
 }

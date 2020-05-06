@@ -12,6 +12,17 @@ public class Block implements Collidable, Sprite {
     private java.awt.Color color;
 
     /**
+     * constructor function.
+     *
+     * @param rect  a Rectangle object.
+     * @param color a java.awt.Color object.
+     */
+    public Block(Rectangle rect, Color color) {
+        this.rect = rect;
+        this.color = color;
+    }
+
+    /**
      * @return a Rectangle object. the block's Rectangle value.
      */
     public Rectangle getRect() {
@@ -23,38 +34,7 @@ public class Block implements Collidable, Sprite {
         return getRect();
     }
 
-    /**
-     * constructor function.
-     *
-     * @param rect  a Rectangle object.
-     * @param color a java.awt.Color object.
-     */
-    public Block(Rectangle rect, Color color) {
-        this.rect = rect;
-        this.color = color;
-    }
-
-
-//    public boolean isPointLeftToVerticalLine(Line l, Point p) {
-//        return l != null && p != null && p.getX() < l.start().getX();
-//    }
-
-//    public boolean isPointRightToVerticalLine(Line l, Point p) {
-//        return l != null && p != null && p.getX() > l.start().getX();
-//    }
-// gets a point with a velocity right to the line, moves the point one step backwards to see if the point would be left
-// to the line
-//    public boolean isCrossedVerticalLine(Line l, Point p, Velocity v) {
-//        if (l == null || p == null || v == null || !l.isVertical()) {
-//            return false;
-//        }
-//        Velocity inverseVelocity = new Velocity(-v.getDx(), v.getDy());
-//        Point oneStepBackwards = inverseVelocity.applyToPoint(p);
-//
-//        return (isPointLeftToVerticalLine(l, p) && isPointRightToVerticalLine(l, oneStepBackwards)) ||
-//                (isPointRightToVerticalLine(l, p) && isPointLeftToVerticalLine(l, oneStepBackwards));
-//    }
-
+    @Override
     public Velocity hit(Point collisionPoint, Velocity currentVelocity) {
         if (collisionPoint == null || currentVelocity == null) {
             return null;
@@ -66,11 +46,9 @@ public class Block implements Collidable, Sprite {
 
         double dx = currentVelocity.getDx(), dy = currentVelocity.getDy();
         if (left.isInLine(collisionPoint) || right.isInLine(collisionPoint)) {
-//            currentVelocity = new Velocity(-currentVelocity.getDx(), currentVelocity.getDy());
             dx = -dx;
         }
         if (upper.isInLine(collisionPoint) || lower.isInLine(collisionPoint)) {
-//            currentVelocity = new Velocity(currentVelocity.getDx(), -currentVelocity.getDy());
             dy = -dy;
         }
 
@@ -80,10 +58,16 @@ public class Block implements Collidable, Sprite {
     @Override
     public void drawOn(DrawSurface surface) {
         if (surface != null) {
-            surface.setColor(this.color);
+            surface.setColor(Color.BLACK);
             surface.drawRectangle((int) this.getRect().getUpperLeft().getX(), (int)
                             this.getRect().getUpperLeft().getY(),
                     (int) this.getRect().getWidth(), (int) this.getRect().getHeight());
+            surface.setColor(this.color);
+            surface.fillRectangle((int) this.getRect().getUpperLeft().getX() + 1, (int)
+                            this.getRect().getUpperLeft().getY() + 1,
+                    (int) this.getRect().getWidth() - 1, (int) this.getRect().getHeight() - 1);
+
+
         }
     }
 
